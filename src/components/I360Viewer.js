@@ -20,6 +20,8 @@ class I360Viewer extends Component {
         this.currentCanvasImage = null
         this.centerX = 0
         this.centerY = 0
+        this.lastX = 0
+        this.lastY = 0
 
         this.state = {
             minScale: 0.5,
@@ -35,8 +37,6 @@ class I360Viewer extends Component {
             canvas: null,
             ctx: null,
             dragStart: null,
-            lastX: 0,
-            lastY: 0,
             currentCanvasImage: null,
             isFullScreen: false,
             viewPortElementWidth: null,
@@ -55,6 +55,8 @@ class I360Viewer extends Component {
     }
 
     componentDidMount(){
+        this.disableZoomin()
+
         this.viewerPercentage = this.viewPercentageRef.current
 
         this.fetchData()
@@ -331,6 +333,30 @@ class I360Viewer extends Component {
         
     }
 
+    prev(e) {
+        //console.log(this.currentLeftPosition)
+        this.setState({
+            currentLeftPosition: 10
+        })
+        //this.currentLeftPosition = 10
+    }
+
+    disableZoomin(){
+        document.addEventListener("gesturestart", function (e) {
+          e.preventDefault();
+            document.body.style.zoom = 0.99;
+        });
+        document.addEventListener("gesturechange", function (e) {
+          e.preventDefault();
+          document.body.style.zoom = 0.99;
+        });
+        
+        document.addEventListener("gestureend", function (e) {
+            e.preventDefault();
+            document.body.style.zoom = 1;
+        });
+    }
+
     componentDidUpdate(prevProps, prevState) {
         if(this.state.currentLeftPosition != prevState.currentLeftPosition){
             console.log('Left Position Changed')
@@ -360,7 +386,7 @@ class I360Viewer extends Component {
                     <div id="v360-menu-btns" className={this.props.buttonClass}>
                         <div className="v360-navigate-btns">
                             <Button 
-                                clicked={this.prev} 
+                                clicked={this.prev.bind(this)} 
                                 icon="fa fa-play" 
                             />
                             <Button 
