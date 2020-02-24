@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import Button from './Button'
 
 class I360Viewer extends Component {
 
@@ -13,44 +14,44 @@ class I360Viewer extends Component {
         this.images = []
         this.amount = 0
         this.loadedImages = 0
-        this.imagesLoaded = false
         this.viewerPercentage = null
         this.currentImage = null
         this.currentLeftPosition = this.currentTopPosition = 0
         this.currentCanvasImage = null
-    }
+        this.centerX = 0
+        this.centerY = 0
 
-    state = {
-        minScale: 0.5,
-        maxScale: 4,
-        scale: 0.2,
-        customOffset: 10,
-        currentScale: 1.0,
-        currentTopPosition: 0,
-        currentLeftPosition: 0,
-        selectMenuOption: 1,
-        currentImage: null,
-        dragging: false,
-        canvas: null,
-        ctx: null,
-        dragStart: null,
-        lastX: 0,
-        lastY: 0,
-        currentCanvasImage: null,
-        isFullScreen: false,
-        viewPortElementWidth: null,
-        movementStart: 0,
-        movement: false,
-        dragSpeed: 150,
-        speedFactor: 13,
-        activeImage: 1,
-        stopAtEdges: false,
-        centerX: 0,
-        centerY: 0,
-        panmode: false,
-        currentLoop: 0,
-        loopTimeoutId: 0,
-        playing: false
+        this.state = {
+            minScale: 0.5,
+            maxScale: 4,
+            scale: 0.2,
+            customOffset: 10,
+            currentScale: 1.0,
+            currentTopPosition: 0,
+            currentLeftPosition: 0,
+            selectMenuOption: 1,
+            currentImage: null,
+            dragging: false,
+            canvas: null,
+            ctx: null,
+            dragStart: null,
+            lastX: 0,
+            lastY: 0,
+            currentCanvasImage: null,
+            isFullScreen: false,
+            viewPortElementWidth: null,
+            movementStart: 0,
+            movement: false,
+            dragSpeed: 150,
+            speedFactor: 13,
+            activeImage: 1,
+            stopAtEdges: false,
+            panmode: false,
+            currentLoop: 0,
+            loopTimeoutId: 0,
+            playing: false,
+            imagesLoaded: false
+        }
     }
 
     componentDidMount(){
@@ -118,7 +119,8 @@ class I360Viewer extends Component {
     }
 
     onAllImagesLoaded(e){
-        this.imagesLoaded = true
+        this.setState({ imagesLoaded: true })
+        
         this.initData()
     }
 
@@ -128,8 +130,86 @@ class I360Viewer extends Component {
         this.ctx = this.canvas.getContext('2d')
         console.log('initialize data here')
 
+        this.attachEvents();
+
         this.checkMobile()
         this.loadInitialImage()
+    }
+
+    attachEvents(){
+        if(this.panmode){
+            this.bindPanModeEvents()
+        }else{
+            this.bind360ModeEvents()
+        }
+    }
+
+    bindPanModeEvents(){
+        /* this.viewPortElementRef.removeEventListener('touchend', this.touchEnd);
+        this.viewPortElementRef.removeEventListener('touchstart', this.touchStart);
+        this.viewPortElementRef.removeEventListener('touchmove', this.touchMove); 
+        this.viewPortElementRef.addEventListener('touchend', this.stopDragging);
+        this.viewPortElementRef.addEventListener('touchstart', this.startDragging);
+        this.viewPortElementRef.addEventListener('touchmove', this.doDragging);  */
+        this.viewPortElementRef.removeEventListener('mouseup', this.stopMoving);
+        this.viewPortElementRef.removeEventListener('mousedown', this.startMoving);
+        this.viewPortElementRef.removeEventListener('mousemove', this.doMoving); 
+        this.viewPortElementRef.addEventListener('mouseup', this.stopDragging);
+        this.viewPortElementRef.addEventListener('mousedown', this.startDragging);
+        this.viewPortElementRef.addEventListener('mousemove', this.doDragging);
+    }
+    
+    bind360ModeEvents(){
+        /* this.viewPortElementRef.removeEventListener('touchend', this.stopDragging);
+        this.viewPortElementRef.removeEventListener('touchstart', this.startDragging);
+        this.viewPortElementRef.removeEventListener('touchmove', this.doDragging); 
+        this.viewPortElementRef.addEventListener('touchend', this.touchEnd);
+        this.viewPortElementRef.addEventListener('touchstart', this.touchStart);
+        this.viewPortElementRef.addEventListener('touchmove', this.touchMove);  */
+        this.viewPortElementRef.removeEventListener('mouseup', this.stopDragging);
+        this.viewPortElementRef.removeEventListener('mousedown', this.startDragging);
+        this.viewPortElementRef.removeEventListener('mousemove', this.doDragging); 
+        
+        this.viewPortElementRef.addEventListener('mouseup', this.stopMoving);
+        this.viewPortElementRef.addEventListener('mousedown', this.startMoving);
+        this.viewPortElementRef.addEventListener('mousemove', this.doMoving);
+    }
+
+    startDragging(evt){
+        this.dragging = true
+        document.body.style.mozUserSelect = document.body.style.webkitUserSelect = document.body.style.userSelect = 'none';
+        if(this.isMobile){
+            this.lastX = evt.touches[0].offsetX || (evt.touches[0].pageX - this.canvas.offsetLeft);
+            this.lastY = evt.touches[0].offsetY || (evt.touches[0].pageY - this.canvas.offsetTop);
+        }else{
+            this.lastX = evt.offsetX || (evt.pageX - this.canvas.offsetLeft);
+            this.lastY = evt.offsetY || (evt.pageY - this.canvas.offsetTop);
+        }
+        
+        this.dragStart = this.ctx.transformedPoint(this.lastX,this.lastY);
+    }
+
+    doDragging(evt){
+        
+        if(this.isMobile){
+            this.lastX = evt.touches[0].offsetX || (evt.touches[0].pageX - this.canvas.offsetLeft);
+            this.lastY = evt.touches[0].offsetY || (evt.touches[0].pageY - this.canvas.offsetTop);
+        }else{
+            this.lastX = evt.offsetX || (evt.pageX - this.canvas.offsetLeft);
+            this.lastY = evt.offsetY || (evt.pageY - this.canvas.offsetTop);
+        }
+        
+        if (this.dragStart){
+            let pt = this.ctx.transformedPoint(this.lastX,this.lastY);
+            this.ctx.translate(pt.x-this.dragStart.x,pt.y-this.dragStart.y);
+            //redraw();
+            this.redraw();
+        }
+    }
+
+    stopDragging(evt){
+        this.dragging = false
+        this.dragStart = null
     }
 
     checkMobile(){
@@ -263,7 +343,7 @@ class I360Viewer extends Component {
             <div>
                 <div className="v360-viewer-container" ref="viewerContainer" id="identifier">
 
-                    {!this.imagesLoaded ? 
+                    {!this.state.imagesLoaded ? 
                     <div className="v360-viewport">
                         <div className="v360-spinner-grow"></div>
                         <p ref={this.viewPercentageRef} className="v360-percentage-text"></p>
@@ -275,6 +355,39 @@ class I360Viewer extends Component {
                             ref={(inputEl) => {this.imageContainerRef = inputEl}} 
                         ></canvas>
                         {this.props.boxShadow ? <div className="v360-product-box-shadow"></div> : ''}
+                    </div>
+
+                    <div id="v360-menu-btns" className={this.props.buttonClass}>
+                        <div className="v360-navigate-btns">
+                            <Button 
+                                clicked={this.prev} 
+                                icon="fa fa-play" 
+                            />
+                            <Button 
+                                clicked={this.prev} 
+                                icon="fa fa-search-plus" 
+                            />
+                            <Button 
+                                clicked={this.prev} 
+                                icon="fa fa-search-minus" 
+                            />
+                            <Button 
+                                clicked={this.prev} 
+                                icon="fa fa-hand-paper" 
+                            />
+                            <Button 
+                                clicked={this.prev} 
+                                icon="fa fa-chevron-left" 
+                            />
+                            <Button 
+                                clicked={this.prev} 
+                                icon="fa fa-chevron-right" 
+                            />
+                            <Button 
+                                clicked={this.prev} 
+                                icon="fa fa-sync" 
+                            />
+                        </div>
                     </div>
                 </div>
             </div>
