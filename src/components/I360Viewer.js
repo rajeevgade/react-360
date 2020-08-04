@@ -16,12 +16,16 @@ class I360Viewer extends Component {
         this.loadedImages = 0
         this.viewerPercentage = null
         this.currentImage = null
-        this.currentLeftPosition = this.currentTopPosition = 0
+        this.spinReverse = false
+        //this.currentLeftPosition = this.currentTopPosition = 0
         this.currentCanvasImage = null
         this.centerX = 0
         this.centerY = 0
         this.lastX = 0
         this.lastY = 0
+        this.movementStart = 0
+        this.movement = false
+        this.speedFactor = 13
 
         this.state = {
             minScale: 0.5,
@@ -52,6 +56,8 @@ class I360Viewer extends Component {
             playing: false,
             imagesLoaded: false
         }
+
+        //this.currentLeftPosition = this.currentLeftPosition.bind(this)
     }
 
     componentDidMount(){
@@ -333,12 +339,115 @@ class I360Viewer extends Component {
         
     }
 
-    prev(e) {
+    prev = (e) => {
         //console.log(this.currentLeftPosition)
-        this.setState({
+        /* this.setState({
             currentLeftPosition: 10
-        })
+        }) */
         //this.currentLeftPosition = 10
+        (this.spinReverse) ? this.turnRight() : this.turnLeft()
+    }
+
+    next = (e) => {
+        (this.spinReverse) ? this.turnLeft() : this.turnRight()
+    }
+
+    resetPosition = () => {
+        this.currentScale = 1
+        this.activeImage = 1
+        this.setImage(true)
+    }
+
+    turnLeft(){
+        this.moveActiveIndexDown(1);
+    }
+
+    turnRight(){
+        this.moveActiveIndexUp(1);
+    }
+
+    moveActiveIndexUp(itemsSkipped) {
+        if (this.stopAtEdges) {
+            if (this.activeImage + itemsSkipped >= this.amount) {
+                this.activeImage = this.amount;
+            } else {
+                this.activeImage += itemsSkipped;
+            }
+        } else {
+            this.activeImage = (this.activeImage + itemsSkipped) % this.amount || this.amount;
+        }
+        
+        this.update()
+    }
+
+    moveActiveIndexDown(itemsSkipped) {
+        if (this.stopAtEdges) {
+            if (this.activeImage - itemsSkipped <= 1) {
+                this.activeImage = 1;
+            } else {
+                this.activeImage -= itemsSkipped;
+            }
+        } else {
+            if (this.activeImage - itemsSkipped < 1) {
+                this.activeImage = this.amount + (this.activeImage - itemsSkipped);
+            } else {
+                this.activeImage -= itemsSkipped;
+            }
+        }
+        
+        this.update()
+    }
+
+    update() {
+        const image = this.images[this.activeImage - 1];
+        this.currentCanvasImage = image
+        this.redraw()
+    }
+
+    zoomImage = (evt) => {
+        this.lastX = evt.offsetX || (evt.pageX - this.canvas.offsetLeft);
+        this.lastY = evt.offsetY || (evt.pageY - this.canvas.offsetTop);
+        
+        var delta = evt.wheelDelta ? evt.wheelDelta/40 : evt.deltaY ? -evt.deltaY : 0;
+        
+        if (delta) this.zoom(delta);
+        //return evt.preventDefault() && false;
+            
+    }
+
+    zoomIn = (evt) => {
+        this.lastX = this.centerX;
+        this.lastY = this.centerY
+        this.zoom(2)
+    }
+    zoomOut = (evt) => {
+        this.lastX = this.centerX;
+        this.lastY = this.centerY
+        this.zoom(-2)
+    }
+
+    zoom(clicks){
+        //console.log(this.lastX + ' - ' + this.lastY)
+        let factor = Math.pow(1.01,clicks);
+        //console.log(factor)
+        if(factor > 1){
+            this.currentScale += factor
+        }else{
+            if(this.currentScale-factor > 1)
+                this.currentScale -= factor
+            else
+                this.currentScale = 1
+        }
+        
+        if(this.currentScale > 1){
+            let pt = this.ctx.transformedPoint(this.lastX,this.lastY);
+            this.ctx.translate(pt.x,pt.y);
+            
+            //console.log(this.currentScale)
+            this.ctx.scale(factor,factor);
+            this.ctx.translate(-pt.x,-pt.y);
+            this.redraw();
+        }
     }
 
     disableZoomin(){
@@ -357,6 +466,49 @@ class I360Viewer extends Component {
         });
     }
 
+
+    onMove(pageX){
+        if (pageX - this.movementStart >= this.speedFactor) {
+            let itemsSkippedRight = Math.floor((pageX - this.movementStart) / this.speedFactor) || 1;
+            
+            this.movementStart = pageX;
+            if (this.spinReverse) {
+                this.moveActiveIndexDown(itemsSkippedRight);
+            } else {
+                this.moveActiveIndexUp(itemsSkippedRight);
+            }
+            this.redraw();
+        } else if (this.movementStart - pageX >= this.speedFactor) {
+            let itemsSkippedLeft = Math.floor((this.movementStart - pageX) / this.speedFactor) || 1;
+            
+            this.movementStart = pageX;
+            if (this.spinReverse) {
+                this.moveActiveIndexUp(itemsSkippedLeft);
+            } else {
+                this.moveActiveIndexDown(itemsSkippedLeft);
+            }
+            this.redraw();
+        }
+    }
+
+    startMoving = (evt) => {
+        this.movement = true
+        this.movementStart = evt.pageX;
+        this.viewPortElementRef.style.cursor = 'grabbing';
+    }
+
+    doMoving = (evt) => {
+        if(this.movement){
+            this.onMove(evt.clientX)
+        }
+    }
+
+    stopMoving = (evt) => {
+        this.movement = false
+        this.movementStart = 0
+        this.viewPortElementRef.style.cursor = 'grab'
+    }
+
     componentDidUpdate(prevProps, prevState) {
         if(this.state.currentLeftPosition != prevState.currentLeftPosition){
             console.log('Left Position Changed')
@@ -367,7 +519,7 @@ class I360Viewer extends Component {
         
         return (
             <div>
-                <div className="v360-viewer-container" ref="viewerContainer" id="identifier">
+                <div className="v360-viewer-container" ref="viewerContainer" id="identifier" onWheel={(e) => this.zoomImage(e)}>
 
                     {!this.state.imagesLoaded ? 
                     <div className="v360-viewport">
@@ -390,11 +542,11 @@ class I360Viewer extends Component {
                                 icon="fa fa-play" 
                             />
                             <Button 
-                                clicked={this.prev} 
+                                clicked={this.zoomIn} 
                                 icon="fa fa-search-plus" 
                             />
                             <Button 
-                                clicked={this.prev} 
+                                clicked={this.zoomOut} 
                                 icon="fa fa-search-minus" 
                             />
                             <Button 
@@ -406,11 +558,11 @@ class I360Viewer extends Component {
                                 icon="fa fa-chevron-left" 
                             />
                             <Button 
-                                clicked={this.prev} 
+                                clicked={this.next} 
                                 icon="fa fa-chevron-right" 
                             />
                             <Button 
-                                clicked={this.prev} 
+                                clicked={this.resetPosition} 
                                 icon="fa fa-sync" 
                             />
                         </div>
