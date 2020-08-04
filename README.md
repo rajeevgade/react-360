@@ -1,68 +1,97 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# react-360
+- A Simple and Beautiful 360&deg; Product Viewer built on React
 
-## Available Scripts
+## Demo
 
-In the project directory, you can run:
+![Preview](https://www.techsolate.com/vue-360-viewer/demo.gif)
 
-### `yarn start`
+[Demo](https://react-360.now.sh/) | [Documentation](https://rajeevgade.github.io/react-360)
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## Features
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+- 360&deg; View
+- Zoom
+- Pan
+- Autoplay (Loops)
+- Full Screen Mode
+- Spin Direction
+- Image Caching
+- Mobile Responsive
+- Touch Events
 
-### `yarn test`
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Installation
+```
+npm install react-360
+```
 
-### `yarn build`
+## Config
 
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```
+import ThreeSixty from 'react-360'
 
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
+import 'react-360/dist/css/style.css'
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Example
+```
+<ThreeSixty
+    amount={36}
+    imagePath="https://scaleflex.cloudimg.io/width/600/q35/https://scaleflex.ultrafast.io/https://scaleflex.airstore.io/demo/chair-360-36"
+    fileName="chair_{index}.jpg?v1"
+/>
+```
+### Adding a Header
+```
+<div class="v360-header text-light bg-dark">
+    <span class="v360-header-title">36 Images - Autoplay (1 loop) - Reverse Spin</span>
+    <span class="v360-header-description"></span>
+</div>
+```
 
-### `yarn eject`
+### Icons
+- The icons used in the demo are from fontawesome. Add the following in your header to display the icons.
+```
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css" rel="stylesheet" type="text/css">
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+## Props
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+| Name | Type | Description | Required | Default Value |
+| --- | --- | --- | --- | --- |
+| amount | Number | Number of images | Yes |
+| imagePath | String | Path to your image | Yes |
+| fileName | String | File name format | Yes |
+| spinReverse | Boolean | Reverse Spin | Optional | false |
+| autoplay | Number | Autoplay your images | Optional | 24 |
+| loop | Number | Number of loops you want to autoplay | Optional | 1 |
+| boxShadow | Boolean | Apply Box Shadow Background | Optional | false |
+| buttonClass | String | Apply Styling to Buttons | Optional (light/dark) | light |
+| paddingIndex | Boolean | Apply Leading Zero to Image Index | Optional | false |
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+## Buttons 
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+(In order from left to right)
 
-## Learn More
+- Play/Pause
+- Zoom In
+- Zoom Out
+- Pan / 360&deg; Mode
+- Move Left
+- Move Right
+- Reset Position
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## Roadmap
 
-### Code Splitting
+- Hotspots
+- Lazyloading
+- Custom CSS Classes
+- Custom Buttons
+- And a few more ...
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
+## Credits
 
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `yarn build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+- [vue](https://reactjs.org/)
+- [core-js](https://github.com/zloirock/core-js)
+- [Cloud Image](https://www.cloudimage.io/)
