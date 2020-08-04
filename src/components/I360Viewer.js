@@ -16,8 +16,8 @@ class I360Viewer extends Component {
         this.loadedImages = 0
         this.viewerPercentage = null
         this.currentImage = null
-        this.spinReverse = false
-        //this.currentLeftPosition = this.currentTopPosition = 0
+        this.spinReverse = true
+        this.currentLeftPosition = this.currentTopPosition = 0
         this.currentCanvasImage = null
         this.centerX = 0
         this.centerY = 0
@@ -26,6 +26,8 @@ class I360Viewer extends Component {
         this.movementStart = 0
         this.movement = false
         this.speedFactor = 13
+        this.activeImage = 1
+        this.stopAtEdges = false
 
         this.state = {
             minScale: 0.5,
@@ -145,7 +147,7 @@ class I360Viewer extends Component {
     }
 
     attachEvents(){
-        if(this.panmode){
+        if(this.state.panmode){
             this.bindPanModeEvents()
         }else{
             this.bind360ModeEvents()
@@ -153,12 +155,12 @@ class I360Viewer extends Component {
     }
 
     bindPanModeEvents(){
-        /* this.viewPortElementRef.removeEventListener('touchend', this.touchEnd);
+        this.viewPortElementRef.removeEventListener('touchend', this.touchEnd);
         this.viewPortElementRef.removeEventListener('touchstart', this.touchStart);
         this.viewPortElementRef.removeEventListener('touchmove', this.touchMove); 
         this.viewPortElementRef.addEventListener('touchend', this.stopDragging);
         this.viewPortElementRef.addEventListener('touchstart', this.startDragging);
-        this.viewPortElementRef.addEventListener('touchmove', this.doDragging);  */
+        this.viewPortElementRef.addEventListener('touchmove', this.doDragging); 
         this.viewPortElementRef.removeEventListener('mouseup', this.stopMoving);
         this.viewPortElementRef.removeEventListener('mousedown', this.startMoving);
         this.viewPortElementRef.removeEventListener('mousemove', this.doMoving); 
@@ -168,12 +170,12 @@ class I360Viewer extends Component {
     }
     
     bind360ModeEvents(){
-        /* this.viewPortElementRef.removeEventListener('touchend', this.stopDragging);
+        this.viewPortElementRef.removeEventListener('touchend', this.stopDragging);
         this.viewPortElementRef.removeEventListener('touchstart', this.startDragging);
         this.viewPortElementRef.removeEventListener('touchmove', this.doDragging); 
         this.viewPortElementRef.addEventListener('touchend', this.touchEnd);
         this.viewPortElementRef.addEventListener('touchstart', this.touchStart);
-        this.viewPortElementRef.addEventListener('touchmove', this.touchMove);  */
+        this.viewPortElementRef.addEventListener('touchmove', this.touchMove); 
         this.viewPortElementRef.removeEventListener('mouseup', this.stopDragging);
         this.viewPortElementRef.removeEventListener('mousedown', this.startDragging);
         this.viewPortElementRef.removeEventListener('mousemove', this.doDragging); 
@@ -183,7 +185,7 @@ class I360Viewer extends Component {
         this.viewPortElementRef.addEventListener('mousemove', this.doMoving);
     }
 
-    startDragging(evt){
+    startDragging = (evt) => {
         this.dragging = true
         document.body.style.mozUserSelect = document.body.style.webkitUserSelect = document.body.style.userSelect = 'none';
         if(this.isMobile){
@@ -197,7 +199,7 @@ class I360Viewer extends Component {
         this.dragStart = this.ctx.transformedPoint(this.lastX,this.lastY);
     }
 
-    doDragging(evt){
+    doDragging = (evt) => {
         
         if(this.isMobile){
             this.lastX = evt.touches[0].offsetX || (evt.touches[0].pageX - this.canvas.offsetLeft);
@@ -215,7 +217,7 @@ class I360Viewer extends Component {
         }
     }
 
-    stopDragging(evt){
+    stopDragging = (evt) => {
         this.dragging = false
         this.dragStart = null
     }
@@ -509,9 +511,64 @@ class I360Viewer extends Component {
         this.viewPortElementRef.style.cursor = 'grab'
     }
 
+    play = (e) => {
+        this.setState({
+            loopTimeoutId: window.setInterval(() => this.loopImages(), 100)
+        })
+    }
+
+    onSpin() {
+        if (this.state.playing || this.state.loopTimeoutId) {
+            this.stop();
+        }
+    }
+
+    stop() {
+        if(this.activeImage === 1){
+            this.setState({ currentLoop: 0 })
+        }
+        this.setState({ playing: false })
+        window.clearTimeout(this.state.loopTimeoutId);
+    }
+
+    loopImages() {
+        if(this.activeImage === 1){
+            if(this.state.currentLoop === this.loop){
+                this.stop()
+            }
+            else{
+                this.setState({ currentLoop: this.state.currentLoop + 1 })
+                
+                this.next()
+            }
+        }
+        else{
+            this.next()
+        }
+    }
+
+    togglePlay = (e) => {
+        if(this.state.playing){
+            this.stop()
+        }else{
+            this.play()
+        }
+
+        this.setState({ playing: !this.state.playing })
+    }
+
+    togglePanMode = (e) => {
+        this.setState({ panmode: !this.state.panmode })
+    }
+
     componentDidUpdate(prevProps, prevState) {
-        if(this.state.currentLeftPosition != prevState.currentLeftPosition){
+        if(this.state.currentLeftPosition !== prevState.currentLeftPosition){
             console.log('Left Position Changed')
+        }
+
+        if(this.state.panmode !== prevState.panmode){
+            console.log('Pan Mode Changed')
+            this.attachEvents()
         }
     }
 
@@ -538,8 +595,8 @@ class I360Viewer extends Component {
                     <div id="v360-menu-btns" className={this.props.buttonClass}>
                         <div className="v360-navigate-btns">
                             <Button 
-                                clicked={this.prev.bind(this)} 
-                                icon="fa fa-play" 
+                                clicked={this.togglePlay} 
+                                icon={this.state.playing ? 'fa fa-pause' : 'fa fa-play'} 
                             />
                             <Button 
                                 clicked={this.zoomIn} 
@@ -550,8 +607,8 @@ class I360Viewer extends Component {
                                 icon="fa fa-search-minus" 
                             />
                             <Button 
-                                clicked={this.prev} 
-                                icon="fa fa-hand-paper" 
+                                clicked={this.togglePanMode} 
+                                icon={this.state.panmode ? 'fa fa-hand-paper' : 'fa fa-arrows'} 
                             />
                             <Button 
                                 clicked={this.prev} 
