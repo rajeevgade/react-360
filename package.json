@@ -1,7 +1,17 @@
 {
-  "name": "react-360",
+  "name": "@rajeevgade/react-360",
   "version": "0.1.0",
-  "private": true,
+  "author": {
+    "name": "Rajeev R. Gade",
+    "email": "rajeevgade@gmail.com"
+  },
+  "description": "A Simple and Beautiful 360 viewer for your product",
+  "repository": "rajeevgade/react-360",
+  "license": "MIT",
+  "private": false,
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/rajeevgade"
+  },
   "dependencies": {
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",

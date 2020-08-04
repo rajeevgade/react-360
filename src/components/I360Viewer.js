@@ -19,8 +19,6 @@ class I360Viewer extends Component {
         this.currentCanvasImage = null
         this.centerX = 0
         this.centerY = 0
-        this.lastX = 0
-        this.lastY = 0
         this.movementStart = 0
         this.movement = false
         this.speedFactor = 13
@@ -28,6 +26,8 @@ class I360Viewer extends Component {
         this.stopAtEdges = false
 
         this.state = {
+            lastX: 0,
+            lastY: 0,
             minScale: 0.5,
             maxScale: 4,
             scale: 0.2,
@@ -165,12 +165,15 @@ class I360Viewer extends Component {
         this.viewPortElementRef.removeEventListener('touchend', this.touchEnd);
         this.viewPortElementRef.removeEventListener('touchstart', this.touchStart);
         this.viewPortElementRef.removeEventListener('touchmove', this.touchMove); 
+
         this.viewPortElementRef.addEventListener('touchend', this.stopDragging);
         this.viewPortElementRef.addEventListener('touchstart', this.startDragging);
         this.viewPortElementRef.addEventListener('touchmove', this.doDragging); 
+
         this.viewPortElementRef.removeEventListener('mouseup', this.stopMoving);
         this.viewPortElementRef.removeEventListener('mousedown', this.startMoving);
         this.viewPortElementRef.removeEventListener('mousemove', this.doMoving); 
+        
         this.viewPortElementRef.addEventListener('mouseup', this.stopDragging);
         this.viewPortElementRef.addEventListener('mousedown', this.startDragging);
         this.viewPortElementRef.addEventListener('mousemove', this.doDragging);
@@ -180,9 +183,11 @@ class I360Viewer extends Component {
         this.viewPortElementRef.removeEventListener('touchend', this.stopDragging);
         this.viewPortElementRef.removeEventListener('touchstart', this.startDragging);
         this.viewPortElementRef.removeEventListener('touchmove', this.doDragging); 
+
         this.viewPortElementRef.addEventListener('touchend', this.touchEnd);
         this.viewPortElementRef.addEventListener('touchstart', this.touchStart);
         this.viewPortElementRef.addEventListener('touchmove', this.touchMove); 
+
         this.viewPortElementRef.removeEventListener('mouseup', this.stopDragging);
         this.viewPortElementRef.removeEventListener('mousedown', this.startDragging);
         this.viewPortElementRef.removeEventListener('mousemove', this.doDragging); 
@@ -195,29 +200,31 @@ class I360Viewer extends Component {
     startDragging = (evt) => {
         this.dragging = true
         document.body.style.mozUserSelect = document.body.style.webkitUserSelect = document.body.style.userSelect = 'none';
-        if(this.isMobile){
-            this.lastX = evt.touches[0].offsetX || (evt.touches[0].pageX - this.canvas.offsetLeft);
-            this.lastY = evt.touches[0].offsetY || (evt.touches[0].pageY - this.canvas.offsetTop);
-        }else{
-            this.lastX = evt.offsetX || (evt.pageX - this.canvas.offsetLeft);
-            this.lastY = evt.offsetY || (evt.pageY - this.canvas.offsetTop);
-        }
+        this.setLastPositions(evt)
         
-        this.dragStart = this.ctx.transformedPoint(this.lastX,this.lastY);
+        this.dragStart = this.ctx.transformedPoint(this.state.lastX,this.state.lastY);
+    }
+
+    setLastPositions(evt){
+        if(this.isMobile){
+            this.setState({ 
+                lastX: evt.touches[0].offsetX || (evt.touches[0].pageX - this.canvas.offsetLeft),
+                lastY: evt.touches[0].offsetY || (evt.touches[0].pageY - this.canvas.offsetTop)
+            })
+        }else{
+            this.setState({ 
+                lastX: evt.offsetX || (evt.pageX - this.canvas.offsetLeft),
+                lastY: evt.offsetY || (evt.pageY - this.canvas.offsetTop) 
+            })
+        }
     }
 
     doDragging = (evt) => {
         
-        if(this.isMobile){
-            this.lastX = evt.touches[0].offsetX || (evt.touches[0].pageX - this.canvas.offsetLeft);
-            this.lastY = evt.touches[0].offsetY || (evt.touches[0].pageY - this.canvas.offsetTop);
-        }else{
-            this.lastX = evt.offsetX || (evt.pageX - this.canvas.offsetLeft);
-            this.lastY = evt.offsetY || (evt.pageY - this.canvas.offsetTop);
-        }
+        this.setLastPositions(evt)
         
         if (this.dragStart){
-            let pt = this.ctx.transformedPoint(this.lastX,this.lastY);
+            let pt = this.ctx.transformedPoint(this.state.lastX,this.state.lastY);
             this.ctx.translate(pt.x-this.dragStart.x,pt.y-this.dragStart.y);
             //redraw();
             this.redraw();
@@ -247,8 +254,8 @@ class I360Viewer extends Component {
             this.currentCanvasImage.src = this.currentImage
             this.currentCanvasImage.onload = () => {
                 let viewportElement = this.viewPortElementRef.getBoundingClientRect()
-                this.canvas.width  = (this.isFullScreen) ? viewportElement.width : this.currentCanvasImage.width
-                this.canvas.height = (this.isFullScreen) ? viewportElement.height : this.currentCanvasImage.height
+                this.canvas.width  = (this.state.isFullScreen) ? viewportElement.width : this.currentCanvasImage.width
+                this.canvas.height = (this.state.isFullScreen) ? viewportElement.height : this.currentCanvasImage.height
                 this.trackTransforms(this.ctx)
                 this.redraw()
             }
@@ -258,8 +265,8 @@ class I360Viewer extends Component {
         }else{
             this.currentCanvasImage = this.images[0]
             let viewportElement = this.viewPortElementRef.getBoundingClientRect()
-            this.canvas.width  = (this.isFullScreen) ? viewportElement.width : this.currentCanvasImage.width
-            this.canvas.height = (this.isFullScreen) ? viewportElement.height : this.currentCanvasImage.height
+            this.canvas.width  = (this.state.isFullScreen) ? viewportElement.width : this.currentCanvasImage.width
+            this.canvas.height = (this.state.isFullScreen) ? viewportElement.height : this.currentCanvasImage.height
             this.trackTransforms(this.ctx)
             this.redraw()
         }
@@ -282,7 +289,7 @@ class I360Viewer extends Component {
             //center image
             this.ctx.drawImage(this.currentCanvasImage, this.currentLeftPosition, this.currentTopPosition, this.currentCanvasImage.width, this.currentCanvasImage.height,
                         centerShift_x,centerShift_y,this.currentCanvasImage.width*ratio, this.currentCanvasImage.height*ratio);  
-            this.addHotspots()
+            //this.addHotspots()
         }
         catch(e){
             this.trackTransforms(this.ctx)
@@ -414,8 +421,10 @@ class I360Viewer extends Component {
     }
 
     zoomImage = (evt) => {
-        this.lastX = evt.offsetX || (evt.pageX - this.canvas.offsetLeft);
-        this.lastY = evt.offsetY || (evt.pageY - this.canvas.offsetTop);
+        this.setState({ 
+            lastX: evt.offsetX || (evt.pageX - this.canvas.offsetLeft),
+            lastY: evt.offsetY || (evt.pageY - this.canvas.offsetTop)
+        })
         
         var delta = evt.wheelDelta ? evt.wheelDelta/40 : evt.deltaY ? -evt.deltaY : 0;
         
@@ -425,13 +434,18 @@ class I360Viewer extends Component {
     }
 
     zoomIn = (evt) => {
-        this.lastX = this.centerX;
+        this.setState({ 
+            lastX: this.centerX,
+            lastY: this.centerY
+        })
         this.lastY = this.centerY
         this.zoom(2)
     }
     zoomOut = (evt) => {
-        this.lastX = this.centerX;
-        this.lastY = this.centerY
+        this.setState({ 
+            lastX: this.centerX,
+            lastY: this.centerY
+        })
         this.zoom(-2)
     }
 
@@ -449,7 +463,7 @@ class I360Viewer extends Component {
         }
         
         if(this.currentScale > 1){
-            let pt = this.ctx.transformedPoint(this.lastX,this.lastY);
+            let pt = this.ctx.transformedPoint(this.state.lastX,this.state.lastY);
             this.ctx.translate(pt.x,pt.y);
             
             //console.log(this.currentScale)

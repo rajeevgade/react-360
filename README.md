@@ -5,7 +5,9 @@
 
 ![Preview](https://www.techsolate.com/vue-360-viewer/demo.gif)
 
-[Demo](https://react-360.now.sh/) | [Documentation](https://rajeevgade.github.io/react-360)
+[Demo](https://react-360.vercel.app/) | [Documentation](https://rajeevgade.github.io/react-360)
+
+[Example](https://github.com/rajeevgade/react-360/blob/master/src/App.js)
 
 ## Features
 
@@ -16,24 +18,25 @@
 - Full Screen Mode
 - Spin Direction
 - Image Caching
-- Mobile Responsive
-- Touch Events
+- Mobile Responsive (Under works)
+- Touch Events (Under works)
 
 
 ## Installation
 ```
-npm install react-360
+npm install @rajeevgade/react-360
 ```
 
 ## Config
 
 ```
-import ThreeSixty from 'react-360'
+import ThreeSixty from '@rajeevgade/react-360'
 
 import 'react-360/dist/css/style.css'
 ```
 
 ## Example
+
 ```
 <ThreeSixty
     amount={36}
