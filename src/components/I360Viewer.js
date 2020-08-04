@@ -564,6 +564,10 @@ class I360Viewer extends Component {
         this.setState({ panmode: !this.state.panmode })
     }
 
+    toggleFullScreen = (e) => {
+        this.setState({ isFullScreen: !this.state.isFullScreen })
+    }
+
     componentDidUpdate(prevProps, prevState) {
         if(this.state.currentLeftPosition !== prevState.currentLeftPosition){
             console.log('Left Position Changed')
@@ -580,13 +584,27 @@ class I360Viewer extends Component {
                 this.play()
             }
         }
+
+        if(this.state.isFullScreen !== prevState.isFullScreen){
+            if(!this.state.isFullScreen){
+                //exit full screen
+                this.viewerContainerRef.classList.remove('v360-main')
+                this.viewerContainerRef.classList.remove('v360-fullscreen')
+            }else{
+                //enter full screen
+                this.viewerContainerRef.classList.add('v360-main')
+                this.viewerContainerRef.classList.add('v360-fullscreen')
+                
+            }
+            this.setImage()
+        }
     }
 
     render() {
         
         return (
             <div>
-                <div className="v360-viewer-container" ref="viewerContainer" id="identifier" onWheel={(e) => this.zoomImage(e)}>
+                <div className="v360-viewer-container" ref={(inputEl) => {this.viewerContainerRef = inputEl}} id="identifier" onWheel={(e) => this.zoomImage(e)}>
 
                     {!this.state.imagesLoaded ? 
                     <div className="v360-viewport">
@@ -602,6 +620,14 @@ class I360Viewer extends Component {
                         {this.props.boxShadow ? <div className="v360-product-box-shadow"></div> : ''}
                     </div>
 
+                    <abbr title="Fullscreen Toggle">
+                        <div class="v360-fullscreen-toggle text-center" onClick={this.toggleFullScreen}>
+                            <div className={this.props.buttonClass === 'dark' ? 'v360-fullscreen-toggle-btn text-light' : 'v360-fullscreen-toggle-btn text-dark'}>
+                                <i className={!this.state.isFullScreen ? 'fas fa-expand text-lg' : 'fas fa-compress text-lg'}></i>
+                            </div>
+                        </div>
+                    </abbr>
+                    
                     <div id="v360-menu-btns" className={this.props.buttonClass}>
                         <div className="v360-navigate-btns">
                             <Button 
@@ -616,10 +642,9 @@ class I360Viewer extends Component {
                                 clicked={this.zoomOut} 
                                 icon="fa fa-search-minus" 
                             />
-                            <Button 
-                                clicked={this.togglePanMode} 
-                                icon={this.state.panmode ? 'fa fa-hand-paper' : 'fa fa-arrows'} 
-                            />
+
+                            {this.state.panmode ? <Button clicked={this.togglePanMode} text="360&deg;"/> : <Button clicked={this.togglePanMode} icon="fa fa-hand-paper"/>}
+
                             <Button 
                                 clicked={this.prev} 
                                 icon="fa fa-chevron-left" 
