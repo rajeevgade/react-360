@@ -12,11 +12,9 @@ class I360Viewer extends Component {
         this.isMobile = false
         this.imageData = []
         this.images = []
-        this.amount = 0
         this.loadedImages = 0
         this.viewerPercentage = null
         this.currentImage = null
-        this.spinReverse = true
         this.currentLeftPosition = this.currentTopPosition = 0
         this.currentCanvasImage = null
         this.centerX = 0
@@ -72,7 +70,8 @@ class I360Viewer extends Component {
 
     fetchData(){
         for(let i=1; i <= this.props.amount; i++){
-            const fileName = this.props.fileName.replace('{index}', i);
+            const imageIndex = (this.props.paddingIndex) ? this.lpad(i, "0", 2) : i
+            const fileName = this.props.fileName.replace('{index}', imageIndex);
             const filePath = `${this.props.imagePath}/${fileName}`
             this.imageData.push(filePath)
         }
@@ -80,10 +79,16 @@ class I360Viewer extends Component {
         this.preloadImages()
     }
 
+    lpad(str, padString, length) {
+        str = str.toString()
+        while (str.length < length) str = padString + str
+        return str
+    }
+
     preloadImages() {
         if (this.imageData.length) {
             try {
-                this.amount = this.imageData.length;
+                //this.props.amount = this.imageData.length;
                 this.imageData.forEach(src => {
                     this.addImage(src);
                 });
@@ -105,10 +110,10 @@ class I360Viewer extends Component {
     }
 
     onImageLoad(event) {
-        const percentage = Math.round(this.loadedImages / this.amount * 100);
+        const percentage = Math.round(this.loadedImages / this.props.amount * 100);
         this.loadedImages += 1;
         this.updatePercentageInLoader(percentage);
-        if (this.loadedImages === this.amount) {
+        if (this.loadedImages === this.props.amount) {
             this.onAllImagesLoaded(event);
         } else if (this.loadedImages === 1) {
             //this.onFirstImageLoaded(event);
@@ -144,6 +149,8 @@ class I360Viewer extends Component {
 
         this.checkMobile()
         this.loadInitialImage()
+
+        this.setState({ playing: this.props.autoplay })
     }
 
     attachEvents(){
@@ -347,11 +354,11 @@ class I360Viewer extends Component {
             currentLeftPosition: 10
         }) */
         //this.currentLeftPosition = 10
-        (this.spinReverse) ? this.turnRight() : this.turnLeft()
+        (this.props.spinReverse) ? this.turnRight() : this.turnLeft()
     }
 
     next = (e) => {
-        (this.spinReverse) ? this.turnLeft() : this.turnRight()
+        (this.props.spinReverse) ? this.turnLeft() : this.turnRight()
     }
 
     resetPosition = () => {
@@ -370,13 +377,13 @@ class I360Viewer extends Component {
 
     moveActiveIndexUp(itemsSkipped) {
         if (this.stopAtEdges) {
-            if (this.activeImage + itemsSkipped >= this.amount) {
-                this.activeImage = this.amount;
+            if (this.activeImage + itemsSkipped >= this.props.amount) {
+                this.activeImage = this.props.amount;
             } else {
                 this.activeImage += itemsSkipped;
             }
         } else {
-            this.activeImage = (this.activeImage + itemsSkipped) % this.amount || this.amount;
+            this.activeImage = (this.activeImage + itemsSkipped) % this.props.amount || this.props.amount;
         }
         
         this.update()
@@ -391,7 +398,7 @@ class I360Viewer extends Component {
             }
         } else {
             if (this.activeImage - itemsSkipped < 1) {
-                this.activeImage = this.amount + (this.activeImage - itemsSkipped);
+                this.activeImage = this.props.amount + (this.activeImage - itemsSkipped);
             } else {
                 this.activeImage -= itemsSkipped;
             }
@@ -474,7 +481,7 @@ class I360Viewer extends Component {
             let itemsSkippedRight = Math.floor((pageX - this.movementStart) / this.speedFactor) || 1;
             
             this.movementStart = pageX;
-            if (this.spinReverse) {
+            if (this.props.spinReverse) {
                 this.moveActiveIndexDown(itemsSkippedRight);
             } else {
                 this.moveActiveIndexUp(itemsSkippedRight);
@@ -484,7 +491,7 @@ class I360Viewer extends Component {
             let itemsSkippedLeft = Math.floor((this.movementStart - pageX) / this.speedFactor) || 1;
             
             this.movementStart = pageX;
-            if (this.spinReverse) {
+            if (this.props.spinReverse) {
                 this.moveActiveIndexUp(itemsSkippedLeft);
             } else {
                 this.moveActiveIndexDown(itemsSkippedLeft);
@@ -532,8 +539,10 @@ class I360Viewer extends Component {
     }
 
     loopImages() {
+        let loop = (this.props.loop) ? this.props.loop : 1
+
         if(this.activeImage === 1){
-            if(this.state.currentLoop === this.loop){
+            if(this.state.currentLoop === loop){
                 this.stop()
             }
             else{
@@ -548,12 +557,6 @@ class I360Viewer extends Component {
     }
 
     togglePlay = (e) => {
-        if(this.state.playing){
-            this.stop()
-        }else{
-            this.play()
-        }
-
         this.setState({ playing: !this.state.playing })
     }
 
@@ -567,8 +570,15 @@ class I360Viewer extends Component {
         }
 
         if(this.state.panmode !== prevState.panmode){
-            console.log('Pan Mode Changed')
             this.attachEvents()
+        }
+
+        if(this.state.playing !== prevState.playing){
+            if(!this.state.playing){
+                this.stop()
+            }else{
+                this.play()
+            }
         }
     }
 
