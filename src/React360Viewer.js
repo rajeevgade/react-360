@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import Button from './components/Button'
+import './style.css'
 
 class React360Viewer extends Component {
 
