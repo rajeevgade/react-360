@@ -1,6 +1,6 @@
 import React from 'react';
 
-import I360Viewer from './components/I360Viewer'
+import React360Viewer from './React360Viewer'
 
 function App() {
   
@@ -12,7 +12,7 @@ function App() {
               <span className="v360-header-title">36 Images - Autoplay (1 loop) - Reverse Spin</span>
               <span className="v360-header-description"></span>
           </div>
-          <I360Viewer
+          <React360Viewer
             amount={36}
             imagePath="https://scaleflex.cloudimg.io/crop/1920x700/n/https://scaleflex.airstore.io/demo/360-car"
             fileName="iris-{index}.jpeg"
@@ -34,7 +34,7 @@ function App() {
               <span className="v360-header-title">36 Images</span>
               <span className="v360-header-description"></span>
           </div>
-          <I360Viewer
+          <React360Viewer
             amount={36}
             imagePath="https://scaleflex.cloudimg.io/width/600/q35/https://scaleflex.ultrafast.io/https://scaleflex.airstore.io/demo/chair-360-36"
             fileName="chair_{index}.jpg?v1"
@@ -46,7 +46,7 @@ function App() {
               <span className="v360-header-title">72 Images - Box Shadow</span>
               <span className="v360-header-description"></span>
           </div>
-          <I360Viewer
+          <React360Viewer
             amount={72}
             imagePath="https://scaleflex.cloudimg.io/width/600/q35/https://scaleflex.ultrafast.io/https://scaleflex.airstore.io/demo/chair-360-72"
             fileName="chair_{index}.jpg?v1"

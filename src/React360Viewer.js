@@ -1,7 +1,7 @@
 import React, { Component } from "react";
-import Button from './Button'
+import Button from './components/Button'
 
-class I360Viewer extends Component {
+class React360Viewer extends Component {
 
     constructor() {
         super();
@@ -681,4 +681,4 @@ class I360Viewer extends Component {
 
 }
 
-export default I360Viewer;
+export default React360Viewer;

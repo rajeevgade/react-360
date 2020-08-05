@@ -8,6 +8,10 @@
   "description": "A Simple and Beautiful 360 viewer for your product",
   "repository": "rajeevgade/react-360",
   "license": "MIT",
+  "main": "./dist/index.js",
+  "files": [
+    "dist"
+  ],
   "private": false,
   "publishConfig": {
     "registry": "https://npm.pkg.github.com/rajeevgade"
@@ -16,6 +20,7 @@
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
+    "acorn-jsx": "^5.2.0",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
     "react-scripts": "3.4.0"
@@ -24,7 +29,9 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "build-r": "rollup -c",
+    "start-r": "rollup -c -w"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -40,5 +47,12 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.3",
+    "babel-runtime": "^6.26.0",
+    "rollup": "^2.23.0",
+    "rollup-plugin-sass": "^1.2.2",
+    "rollup-plugin-typescript2": "^0.27.1"
   }
 }
