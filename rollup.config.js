@@ -1,7 +1,7 @@
-import sass from 'rollup-plugin-sass'
-
 import pkg from './package.json'
 import jsx from 'acorn-jsx';
+
+import postcss from 'rollup-plugin-postcss';
 
 export default {
     input: 'src/React360Viewer.js',
@@ -17,7 +17,9 @@ export default {
         jsx()
     ],
     plugins: [
-      sass({ insert: true }),
+        postcss({
+            extensions: [ '.css' ],
+        }),
     ],
     external: ['react', 'react-dom']
 }

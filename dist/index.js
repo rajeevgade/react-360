@@ -1,20 +1,34 @@
-function ___$insertStyle(css) {
-  if (!css) {
-    return;
-  }
-  if (typeof window === 'undefined') {
-    return;
-  }
+import React, { Component } from 'react';
 
+function styleInject(css, ref) {
+  if ( ref === void 0 ) ref = {};
+  var insertAt = ref.insertAt;
+
+  if (!css || typeof document === 'undefined') { return; }
+
+  var head = document.head || document.getElementsByTagName('head')[0];
   var style = document.createElement('style');
+  style.type = 'text/css';
 
-  style.setAttribute('type', 'text/css');
-  style.innerHTML = css;
-  document.head.appendChild(style);
-  return css;
+  if (insertAt === 'top') {
+    if (head.firstChild) {
+      head.insertBefore(style, head.firstChild);
+    } else {
+      head.appendChild(style);
+    }
+  } else {
+    head.appendChild(style);
+  }
+
+  if (style.styleSheet) {
+    style.styleSheet.cssText = css;
+  } else {
+    style.appendChild(document.createTextNode(css));
+  }
 }
 
-import React, { Component } from 'react';
+var css_248z = "/* \n    Document   : style.css\n    Created on : Dec 26, 2019\n    Author     : Rajeev R. Gade\n    Description: Stylesheet for 360 viewer\n*/\nbody,\nhtml {\n    width: 100%;\n    height: 100%;\n    margin: 0;\n    font-family: sans-serif;\n}\n\nroot {\n    display: block;\n}\n\n.v360-main {\n    width: 100%;\n    height: 100%;\n    max-width: 1024px;\n    margin: 20px auto;\n    position: relative;\n    display: flex;\n    flex-direction: column;\n    justify-content: flex-start;\n    align-items: stretch;\n    align-content: stretch;\n}\n\n/* HEADER */\n\n.v360-header {\n    /* width: calc(100% - 20px); */\n    background-color: #000;\n    padding: 10px;\n    color: #FFFFFF;\n    font-size: 1.5em;\n    text-align: center;\n    font-weight: bold;\n    /* text-shadow: 1px 1px #000000; */\n    flex: 0 1 auto;\n}\n\n/* VIEWER */\n\n#productInsert {\n    background-color: #FFF;\n    width: 100%;\n    height: calc(100vh - 184px);\n    max-height: 768px;\n    position: relative;\n    overflow: hidden;\n}\n\n.v360-fullscreen #productInsert {\n    height: 100vh;\n    max-height: none;\n}\n\n#viewport-wrapper {\n    width: 100%;\n    height: calc(100% - 10px);\n    margin: 5px auto;\n    position: absolute;\n    left: 0;\n    transition: width 0.3s ease;\n}\n.v360-viewport {\n    background-color: #FFF;\n    width: 100%;\n    height: 100%;\n    overflow: hidden;\n    /* position: absolute; */\n    left: 0;\n    /* transition: width 0.3s ease; */\n    display: flex;\n    justify-content: center;\n    align-items: center;\n}\n\n#viewport-wrapper.wide {\n    width: 100%;\n}\n\n.v360-viewport iframe {\n    width: 100%;\n    height: 100%;\n    position: relative;\n    /* left: 50%;\n    -webkit-transform: translateX(-50%) translateY(0);\n    -ms-transform: translateX(-50%) translateY(0);\n    transform: translateX(-50%) translateY(0);\n    transform-origin: center center; */\n}\n\n.v360-viewport img {\n    position: relative;\n}\n\n\n/* FULLSCREEN & MENU TOGGLE BUTTONS */\n\n.v360-fullscreen-toggle{\n    width: 30px;\n    height: 30px;\n    margin: 15px;\n    position: absolute;\n    /* color: #999;\n    fill: #999; */\n    float: right;\n    cursor: pointer;\n    top: 0;\n    right: 0;\n    z-index: 150;\n}\n\n.v360-fullscreen-toggle:hover {\n    fill: #000;\n}\n/* \n.v360-fullscreen-toggle div:last-child {\n    display: none;\n} */\n\n.v360-fullscreen {\n    z-index: 9999;\n    width: 100%;\n    max-width: none;\n    height: 100%;\n    margin: 0;\n    padding: 0;\n    position: fixed;\n    top: 0;\n    left: 0;\n}\n\n.v360-fullscreen .v360-header,\n.v360-fullscreen #v360-menu-btns {\n    border-radius: 0;\n}\n\n.v360-fullscreen productInsert {\n    height: calc(100vh - 95px);\n    max-height: none;\n}\n\n.ui-accordion-header {\n    background-color: #B0BEC5;\n    outline: none;\n    line-height: 1.5em;\n    transition: all 0.3s ease;\n}\n\n.ui-accordion-header:hover,\n.ui-accordion-header.ui-state-active {\n    background-color: #607D8B;\n    color: #FFF;\n}\n\n/* MENU BUTTONS */\n\n#v360-menu-btns {\n    width: 100%;\n    padding: 5px 0;\n    text-align: center;\n    /* position: absolute; */\n    bottom: 0;\n    display: flex;\n    justify-content: center;\n    z-index: 150;\n}\n\n.light{\n    background-color: #fff !important;\n}\n\n.dark{\n    background-color: #000 !important;\n}\n\n.v360-menu-btns {\n    /* background-color: #999; */\n    width: auto;\n    min-height: 20px;\n    margin: 5px 5px;\n    padding: 5px 10px;\n    border-radius: 5px;\n    outline: none;\n    font-size: 1.3em;\n    text-align: center;\n    line-height: 1em;\n    cursor: pointer;\n    user-select: none;\n    position: relative;\n    display: inline-block;\n    opacity: 1;\n}\n/* \n.v360-btn-active{\n    background-color: #000;\n} */\n\n.light .v360-menu-btns {\n    color: #000;\n}\n\n.dark .v360-menu-btns {\n    color: #fff;\n}\n  \n/* .light .v360-btn-active{\n    color: #fff;\n} */\n\n.light .v360-menu-btns:hover {\n    color: #fff;\n    background-color: #000;\n}\n\n.dark .v360-menu-btns:hover {\n    color: #000;\n    background-color: #fff;\n}\n\n.v360-main {\n    filter: alpha(opacity=50);\n    /* opacity: 0.5; */\n    cursor: default;\n    /* pointer-events: none; */\n}\n\n#v360-image-container {\n    width: 100%;\n    height: 100%;\n    background-repeat: no-repeat;\n    background-position: center;\n    background-size: contain;\n    position: relative;\n}\n\n.v360-image-container {\n    width: 100%;\n    height: 100%;\n    background-repeat: no-repeat;\n    background-position: center;\n    background-size: contain;\n    position: relative;\n}\n\n.v360-product-box-shadow{\n    position: absolute;\n    /* z-index: 99; */\n    top: 0px;\n    left: 0px;\n    right: 0px;\n    bottom: 0px;\n    box-shadow: rgb(34, 34, 34) 0px 0px 100px inset;\n}\n\n.v360-fullscreen-toggle-btn i{\n    /* background-color: #fff; */\n    font-size: 20px;\n}\n.v360-spinner-grow{\n    display: inline-block;\n    width: 2rem;\n    height: 2rem;\n    vertical-align: text-bottom;\n    background-color: rgb(33, 37, 41);\n    border-radius: 50%;\n    opacity: 0;\n    -webkit-animation: spinner-grow .75s linear infinite;\n    animation: spinner-grow .75s linear infinite;\n}\n.v360-percentage-description{\n    margin-left: 2rem;\n}\n\n\n/* Tooltip */\n\n.tooltip {\n    position: relative;\n    display: inline-block;\n  }\n  \n  .tooltip .tooltiptext {\n    visibility: hidden;\n    width: 120px;\n    background-color: #555;\n    color: #fff;\n    text-align: center;\n    border-radius: 6px;\n    padding: 5px 0;\n    position: absolute;\n    z-index: 1;\n    bottom: 125%;\n    left: 50%;\n    margin-left: -60px;\n    opacity: 0;\n    transition: opacity 0.3s;\n  }\n  \n  .tooltip .tooltiptext::after {\n    content: \"\";\n    position: absolute;\n    top: 100%;\n    left: 50%;\n    margin-left: -5px;\n    border-width: 5px;\n    border-style: solid;\n    border-color: #555 transparent transparent transparent;\n  }\n  \n  .tooltip:hover .tooltiptext {\n    visibility: visible;\n    opacity: 1;\n  }\n  \n  .tooltip{\n    opacity: 1 !important;\n  }\n\n  /* .hotspot-button{\n      position: absolute;\n  } */";
+styleInject(css_248z);
 
 class React360Viewer extends Component {
 
