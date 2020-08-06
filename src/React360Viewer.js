@@ -141,10 +141,10 @@ class React360Viewer extends Component {
     }
 
     initData(){
-        console.log(this.imageContainerRef)
+        //console.log(this.imageContainerRef)
         this.canvas = this.imageContainerRef
         this.ctx = this.canvas.getContext('2d')
-        console.log('initialize data here')
+        //console.log('initialize data here')
 
         this.attachEvents();
 
@@ -636,7 +636,7 @@ class React360Viewer extends Component {
                     </div>
 
                     <abbr title="Fullscreen Toggle">
-                        <div class="v360-fullscreen-toggle text-center" onClick={this.toggleFullScreen}>
+                        <div className="v360-fullscreen-toggle text-center" onClick={this.toggleFullScreen}>
                             <div className={this.props.buttonClass === 'dark' ? 'v360-fullscreen-toggle-btn text-light' : 'v360-fullscreen-toggle-btn text-dark'}>
                                 <i className={!this.state.isFullScreen ? 'fas fa-expand text-lg' : 'fas fa-compress text-lg'}></i>
                             </div>

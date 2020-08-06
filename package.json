@@ -1,11 +1,12 @@
 {
   "name": "react-360-view",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "author": {
     "name": "Rajeev R. Gade",
     "email": "rajeevgade@gmail.com"
   },
   "description": "A Simple and Beautiful 360 viewer for your product",
+  "homepage": "https://react-360.vercel.app/",
   "repository": {
     "type": "git",
     "url": "https://github.com/rajeevgade/react-360"
@@ -30,10 +31,12 @@
     "react-scripts": "3.4.0"
   },
   "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "build": "rollup -c",
-    "start": "rollup -c -w"
+    "build-c": "rollup -c",
+    "start-c": "rollup -c -w"
   },
   "eslintConfig": {
     "extends": "react-app"

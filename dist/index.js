@@ -439,10 +439,10 @@ var React360Viewer = /*#__PURE__*/function (_Component) {
   }, {
     key: "initData",
     value: function initData() {
-      console.log(this.imageContainerRef);
+      //console.log(this.imageContainerRef)
       this.canvas = this.imageContainerRef;
-      this.ctx = this.canvas.getContext('2d');
-      console.log('initialize data here');
+      this.ctx = this.canvas.getContext('2d'); //console.log('initialize data here')
+
       this.attachEvents();
       this.checkMobile();
       this.loadInitialImage();
@@ -882,7 +882,7 @@ var React360Viewer = /*#__PURE__*/function (_Component) {
       }) : ''), /*#__PURE__*/React.createElement("abbr", {
         title: "Fullscreen Toggle"
       }, /*#__PURE__*/React.createElement("div", {
-        class: "v360-fullscreen-toggle text-center",
+        className: "v360-fullscreen-toggle text-center",
         onClick: this.toggleFullScreen
       }, /*#__PURE__*/React.createElement("div", {
         className: this.props.buttonClass === 'dark' ? 'v360-fullscreen-toggle-btn text-light' : 'v360-fullscreen-toggle-btn text-dark'
