@@ -1,20 +1,24 @@
 {
-  "name": "@rajeevgade/react-360",
+  "name": "react-360-view",
   "version": "0.1.1",
   "author": {
     "name": "Rajeev R. Gade",
     "email": "rajeevgade@gmail.com"
   },
   "description": "A Simple and Beautiful 360 viewer for your product",
-  "repository": "rajeevgade/react-360",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rajeevgade/react-360"
+  },
   "license": "MIT",
   "main": "./dist/index.js",
   "files": [
-    "dist"
+    "dist/*"
   ],
   "private": false,
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com/rajeevgade"
+  "peerDependencies": {
+    "react": "^16.12.0",
+    "react-dom": "^16.12.0",
   },
   "dependencies": {
     "@testing-library/jest-dom": "^4.2.4",
@@ -26,12 +30,10 @@
     "react-scripts": "3.4.0"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "build-r": "rollup -c",
-    "start-r": "rollup -c -w"
+    "build": "rollup -c",
+    "start": "rollup -c -w"
   },
   "eslintConfig": {
     "extends": "react-app"

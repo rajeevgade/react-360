@@ -1,4 +1,4 @@
-# react-360
+# react-360-view
 - A Simple and Beautiful 360&deg; Product Viewer built on React
 
 ### [Click here for Vue version](https://github.com/rajeevgade/vue-360)
@@ -26,13 +26,13 @@
 
 ## Installation
 ```
-npm install @rajeevgade/react-360
+npm install react-360-view
 ```
 
 ## Config
 
 ```
-import ThreeSixty from '@rajeevgade/react-360'
+import ThreeSixty from 'react-360-view'
 
 import 'react-360/dist/css/style.css'
 ```
