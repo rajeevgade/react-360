@@ -1,3 +1,4 @@
+import babel from 'rollup-plugin-babel';
 import pkg from './package.json'
 import jsx from 'acorn-jsx';
 
@@ -9,7 +10,7 @@ export default {
       {
         file: pkg.main,
         exports: 'named',
-        sourcemap: true,
+        format: 'esm',
         strict: false
       }
     ],
@@ -20,6 +21,7 @@ export default {
         postcss({
             extensions: [ '.css' ],
         }),
+        babel()
     ],
     external: ['react', 'react-dom']
 }

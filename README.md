@@ -33,8 +33,6 @@ npm install react-360-view
 
 ```
 import ThreeSixty from 'react-360-view'
-
-import 'react-360/dist/css/style.css'
 ```
 
 ## Example
