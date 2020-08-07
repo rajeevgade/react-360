@@ -2,12 +2,15 @@ import React, { Component } from "react";
 import Button from './components/Button'
 import './style.css'
 
+import Hammer from 'react-hammerjs';
+
 class React360Viewer extends Component {
 
     constructor() {
         super();
         //this.imageContainerRef = React.createRef();
         this.viewPercentageRef = React.createRef();
+        this.viewPortElementRef = React.createRef();
         this.canvas = null
         this.ctx = null
         this.isMobile = false
@@ -65,7 +68,8 @@ class React360Viewer extends Component {
         this.disableZoomin()
 
         this.viewerPercentage = this.viewPercentageRef.current
-
+        //console.log(this.viewerContainerRef.getElementsByClassName('v360-viewport-container'))
+        this.viewPortElementRef = this.viewerContainerRef.getElementsByClassName('v360-viewport-container')[0]
         this.fetchData()
     }
 
@@ -181,6 +185,7 @@ class React360Viewer extends Component {
     }
     
     bind360ModeEvents(){
+        console.log(this.viewPortElementRef)
         this.viewPortElementRef.removeEventListener('touchend', this.stopDragging);
         this.viewPortElementRef.removeEventListener('touchstart', this.startDragging);
         this.viewPortElementRef.removeEventListener('touchmove', this.doDragging); 
@@ -615,6 +620,10 @@ class React360Viewer extends Component {
         }
     }
 
+    handlePinch(){
+        console.log('pinch event')
+    }
+
     render() {
         
         return (
@@ -626,14 +635,21 @@ class React360Viewer extends Component {
                         <div className="v360-spinner-grow"></div>
                         <p ref={this.viewPercentageRef} className="v360-percentage-text"></p>
                     </div> : '' }
-
-                    <div className="v360-viewport" ref={(inputEl) => {this.viewPortElementRef = inputEl}}>
-                        <canvas 
-                            className="v360-image-container" 
-                            ref={(inputEl) => {this.imageContainerRef = inputEl}} 
-                        ></canvas>
-                        {this.props.boxShadow ? <div className="v360-product-box-shadow"></div> : ''}
-                    </div>
+                    
+                    <Hammer onPinch={this.handlePinch}
+                        options={{
+                        recognizers: {
+                            pinch: { enable: true }
+                        }
+                    }}>
+                        <div className="v360-viewport-container v360-viewport">
+                            <canvas 
+                                className="v360-image-container" 
+                                ref={(inputEl) => {this.imageContainerRef = inputEl}} 
+                            ></canvas>
+                            {this.props.boxShadow ? <div className="v360-product-box-shadow"></div> : ''}
+                        </div>
+                    </Hammer>
 
                     <abbr title="Fullscreen Toggle">
                         <div className="v360-fullscreen-toggle text-center" onClick={this.toggleFullScreen}>
