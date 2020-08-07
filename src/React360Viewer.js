@@ -538,6 +538,18 @@ class React360Viewer extends Component {
         this.viewPortElementRef.style.cursor = 'grab'
     }
 
+    touchStart = (evt) => {
+        this.movementStart = evt.touches[0].clientX
+    }
+
+    touchMove = (evt) => {
+        this.onMove(evt.touches[0].clientX)
+    }
+
+    touchEnd = () => {
+        this.movementStart = 0
+    }
+
     play = (e) => {
         this.setState({
             loopTimeoutId: window.setInterval(() => this.loopImages(), 100)
@@ -635,8 +647,8 @@ class React360Viewer extends Component {
                         <div className="v360-spinner-grow"></div>
                         <p ref={this.viewPercentageRef} className="v360-percentage-text"></p>
                     </div> : '' }
-                    
-                    <Hammer onPinch={this.handlePinch}
+
+                    <Hammer onPinchIn={this.zoomIn} onPinchOut={this.zoomOut}
                         options={{
                         recognizers: {
                             pinch: { enable: true }
