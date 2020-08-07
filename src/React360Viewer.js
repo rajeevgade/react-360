@@ -36,7 +36,7 @@ class React360Viewer extends Component {
             maxScale: 4,
             scale: 0.2,
             customOffset: 10,
-            currentScale: 1.0,
+            currentScale: 1,
             currentTopPosition: 0,
             currentLeftPosition: 0,
             selectMenuOption: 1,
@@ -185,7 +185,6 @@ class React360Viewer extends Component {
     }
     
     bind360ModeEvents(){
-        console.log(this.viewPortElementRef)
         this.viewPortElementRef.removeEventListener('touchend', this.stopDragging);
         this.viewPortElementRef.removeEventListener('touchstart', this.startDragging);
         this.viewPortElementRef.removeEventListener('touchmove', this.doDragging); 
@@ -444,7 +443,7 @@ class React360Viewer extends Component {
             lastX: this.centerX,
             lastY: this.centerY
         })
-        this.lastY = this.centerY
+        //this.lastY = this.centerY
         this.zoom(2)
     }
     zoomOut = (evt) => {
@@ -632,8 +631,20 @@ class React360Viewer extends Component {
         }
     }
 
-    handlePinch(){
-        console.log('pinch event')
+    handlePinch = (e) => {
+        if (e.scale < this.currentScale) {
+        // zoom in
+            this.zoomIn();
+        } else if (e.scale > this.currentScale) {
+        // zoom out
+            this.zoomOut();
+        }
+
+        //lastScale = e.scale;
+    }
+
+    pinchOut = () => {
+        this.currentScale = 1
     }
 
     render() {
@@ -648,7 +659,7 @@ class React360Viewer extends Component {
                         <p ref={this.viewPercentageRef} className="v360-percentage-text"></p>
                     </div> : '' }
 
-                    <Hammer onPinchIn={this.zoomIn} onPinchOut={this.zoomOut}
+                    <Hammer onPinchIn={this.handlePinch} onPinchOut={this.handlePinch} onPinchEnd={this.pinchOut}
                         options={{
                         recognizers: {
                             pinch: { enable: true }

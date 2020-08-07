@@ -7,7 +7,7 @@ function App() {
   return (
     <div className="container">
       <div className="row">
-        <div className="col-12 m-4 card p-0">
+        <div className="col-12 mb-4 card p-0">
           <div className="v360-header text-light bg-dark">
               <span className="v360-header-title">36 Images - Autoplay (1 loop) - Reverse Spin</span>
               <span className="v360-header-description"></span>
