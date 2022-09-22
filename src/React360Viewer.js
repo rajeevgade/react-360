@@ -86,7 +86,7 @@ class React360Viewer extends Component {
     fetchData(){
         for(let i=1; i <= this.props.amount; i++){
             const imageIndex = (this.props.paddingIndex) ? this.lpad(i, "0", 2) : i
-            const fileName = this.props.fileName.replace('{index}', imageIndex);
+            const fileName = this.props.fileName.replace(/([^:]\/)\/+/g, "$1");
             const filePath = `${this.props.imagePath}/${fileName}`.replace(/[^:][/]{2,}/,"/")
             this.imageData.push(filePath)
         }
