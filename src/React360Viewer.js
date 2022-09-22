@@ -255,7 +255,7 @@ class React360Viewer extends Component {
         
         if(!cached){
             this.currentCanvasImage = new Image()
-            this.currentCanvasImage.crossOrigin='anonymous'
+            // this.currentCanvasImage.crossOrigin='anonymous'
             this.currentCanvasImage.src = this.currentImage
             this.currentCanvasImage.onload = () => {
                 let viewportElement = this.viewPortElementRef.getBoundingClientRect()
