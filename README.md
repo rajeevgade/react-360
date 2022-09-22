@@ -1,7 +1,7 @@
 # react-360-view
 - A Simple and Beautiful 360&deg; Product Viewer built on React
 
-### [Click here for Vue version](https://github.com/rajeevgade/vue-360)
+## [Click here for Vue version](https://github.com/rajeevgade/vue-360)
 
 ## Demo
 
@@ -20,6 +20,9 @@
 - Full Screen Mode
 - Spin Direction
 - Image Caching
+- Custom buttons
+- Custom callbacks
+- Override image
 - Mobile Responsive (Under works)
 - Touch Events (Under works)
 
@@ -68,11 +71,21 @@ import ThreeSixty from 'react-360-view'
 | spinReverse | Boolean | Reverse Spin | Optional | false |
 | autoplay | Number | Autoplay your images | Optional | 24 |
 | loop | Number | Number of loops you want to autoplay | Optional | 1 |
+| overrideImage | Number | Override image index to be displayed. Changing this value triggers the image to change. | Optional | undefined |
+| allowZoom | Boolean | Allow zooming in and out of image | Optional | true |
+| allowPinch | Boolean | Allow pinch action on the image | Optional | true |
+| showMenu | Boolean | Render menu bar below image | Optional | true |
 | boxShadow | Boolean | Apply Box Shadow Background | Optional | false |
 | buttonClass | String | Apply Styling to Buttons | Optional (light/dark) | light |
 | paddingIndex | Boolean | Apply Leading Zero to Image Index | Optional | false |
+| buttonNext | Component | Render custom component for next button. | Optional | undefined |
+| buttonPrevious | Component | Render custom component for previous button. | Optional | undefined |
+| buttonPlay | Component | Render custom component for play button. | Optional | undefined |
+| loadingIndicator | Component | Render custom loading indicator while loading images. | Optional | undefined |
+| onLoaded | Function | Fires callback function when all images are loaded and passes in array of loaded images. | Optional | undefined |
+| onUpdate | Function | Fires callback function when image is changed and passes in old image data and new image data. | Optional | undefined |
 
-## Buttons 
+## Buttons
 
 (In order from left to right)
 
@@ -90,7 +103,6 @@ import ThreeSixty from 'react-360-view'
 - Hotspots
 - Lazyloading
 - Custom CSS Classes
-- Custom Buttons
 - And a few more ...
 
 ## Credits
